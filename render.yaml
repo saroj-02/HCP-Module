@@ -1,0 +1,24 @@
+services:
+  # Frontend Service (Static Site)
+  - type: web
+    name: aiova-frontend
+    runtime: static
+    buildCommand: npm install && npm run build
+    publishPath: frontend/dist
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+    # Root directory for the frontend
+    rootDir: frontend
+
+  # Backend Service (Web Service)
+  - type: web
+    name: aiova-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10
+    # Root directory for the backend
+    rootDir: backend

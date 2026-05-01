@@ -13,7 +13,7 @@ app = FastAPI(title="AI CRM HCP Module")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"], # For production, you should list your frontend URL here for safety.
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

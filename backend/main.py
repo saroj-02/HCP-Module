@@ -69,10 +69,22 @@ def get_interactions(db: Session = Depends(get_db)):
         })
     return results
 
+from fastapi.responses import FileResponse
+
 # Serve static files from the frontend/dist directory
 frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
-if os.path.exists(frontend_path):
-    app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+
+@app.get("/{full_path:path}")
+async def serve_spa(full_path: str):
+    # Check if the file exists in the dist directory
+    file_path = os.path.join(frontend_path, full_path)
+    if os.path.isfile(file_path):
+        return FileResponse(file_path)
+    # Otherwise, serve index.html for SPA routing
+    index_path = os.path.join(frontend_path, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"error": "Not Found"}
 
 if __name__ == "__main__":
     import uvicorn

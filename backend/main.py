@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
@@ -70,6 +70,19 @@ def get_interactions(db: Session = Depends(get_db)):
     return results
 
 from fastapi.responses import FileResponse
+
+@app.get("/sitemap.xml")
+async def sitemap(request: Request):
+    base_url = str(request.base_url)
+    sitemap_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+   <url>
+      <loc>{base_url}</loc>
+      <changefreq>daily</changefreq>
+      <priority>1.0</priority>
+   </url>
+</urlset>"""
+    return Response(content=sitemap_xml, media_type="application/xml")
 
 # Serve static files from the frontend/dist directory
 frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
